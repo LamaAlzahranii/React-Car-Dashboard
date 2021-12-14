@@ -1,4 +1,3 @@
-import * as React from "react"
 import Box from "@mui/material/Box"
 import Drawer from "@mui/material/Drawer"
 import CssBaseline from "@mui/material/CssBaseline"
@@ -21,10 +20,13 @@ import { createTheme, ThemeProvider } from "@mui/material"
 import { Link } from "react-router-dom"
 import LoginIcon from "@mui/icons-material/Login"
 import GroupAddIcon from "@mui/icons-material/GroupAdd"
+import { useContext } from "react"
+import FilmsContext from "../utils/FilmsContext"
 
 const drawerWidth = 240
 
 export default function PermanentDrawerLeft() {
+  const { logout } = useContext(FilmsContext)
   return (
     <ThemeProvider
       theme={createTheme({
@@ -100,14 +102,25 @@ export default function PermanentDrawerLeft() {
           </Link>
         </List>
         <List style={{ marginTop: "auto" }}>
-          <Link to="/login">
-            <ListItem button>
-              <ListItemIcon>
-                <LoginIcon />
-              </ListItemIcon>
-              <ListItemText primary="login" sx={{ color: "white", textDecoration: "none" }} />
-            </ListItem>
-          </Link>
+          {localStorage.tokenDashboardFilms ? (
+            <Link to="/login">
+              <ListItem button>
+                <ListItemIcon>
+                  <LoginIcon />
+                </ListItemIcon>
+                <ListItemText primary="logout" sx={{ color: "white", textDecoration: "none" }} onClick={logout} />
+              </ListItem>
+            </Link>
+          ) : (
+            <Link to="/login">
+              <ListItem button>
+                <ListItemIcon>
+                  <LoginIcon />
+                </ListItemIcon>
+                <ListItemText primary="login" sx={{ color: "white", textDecoration: "none" }} />
+              </ListItem>
+            </Link>
+          )}
         </List>
       </Drawer>
     </ThemeProvider>

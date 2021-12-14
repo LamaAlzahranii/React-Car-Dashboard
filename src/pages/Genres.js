@@ -2,16 +2,18 @@ import { Button } from "react-bootstrap"
 import { useContext, useState } from "react"
 import { Table } from "react-bootstrap"
 import FilmsContext from "../utils/FilmsContext"
+import FilmCell from "../components/FilmRow"
 import AddIcon from "@mui/icons-material/Add"
 import FilmAddModal from "../components/FilmAddModal"
-import FilmRow from "../components/FilmRow"
+import GenreRow from "../components/GenreRow"
+import GenreAddModal from "../components/GenreAddModal"
 
-function Films() {
-  const { films } = useContext(FilmsContext)
+function Genres() {
+  const { genres } = useContext(FilmsContext)
   const [show, setShow] = useState(false)
   return (
     <>
-      <h1 style={{ marginTop: 10 }}>Films</h1>
+      <h1 style={{ marginTop: 10 }}>Genres</h1>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <Button style={{ marginRight: 40, marginBottom: 10 }} onClick={() => setShow(true)} variant="outline-primary">
           <AddIcon />
@@ -21,22 +23,19 @@ function Films() {
         <thead>
           <tr>
             <th style={{ width: "9%" }}>#</th>
-            <th style={{ width: "18%" }}>Title</th>
-            <th style={{ width: "18%" }}>Description</th>
-            <th style={{ width: "18%" }}>Poster</th>
-            <th style={{ width: "9%" }}>Rating</th>
+            <th style={{ width: "58%" }}>Name</th>
             <th style={{ width: "36%" }}>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {films.map(film => (
-            <FilmRow key={film._id} film={film} />
+          {genres.map(genre => (
+            <GenreRow key={genre._id} genre={genre} />
           ))}
         </tbody>
       </Table>
-      <FilmAddModal show={show} setShow={setShow} />
+      <GenreAddModal show={show} setShow={setShow} />
     </>
   )
 }
 
-export default Films
+export default Genres

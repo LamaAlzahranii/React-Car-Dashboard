@@ -4,7 +4,7 @@ import FilmDeleteModal from "./FilmDeleteModal"
 import FilmEditModal from "./FilmEditModal"
 import FilmViewModal from "./FilmViewModal"
 
-function FilmCell(props) {
+function FilmRow(props) {
   const { film } = props
   const [viewShow, setViewShow] = useState(false)
   const [deleteShow, setDeleteShow] = useState(false)
@@ -37,4 +37,4 @@ function FilmCell(props) {
   )
 }
 
-export default FilmCell
+export default FilmRow
