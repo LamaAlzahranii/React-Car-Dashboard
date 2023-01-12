@@ -11,9 +11,11 @@ import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import InboxIcon from "@mui/icons-material/MoveToInbox"
 import MailIcon from "@mui/icons-material/Mail"
-import MovieCreationIcon from "@mui/icons-material/MovieCreation"
-import AddReactionIcon from "@mui/icons-material/AddReaction"
+import DirectionsCarFilledRoundedIcon from '@mui/icons-material/DirectionsCarFilledRounded';
+import EvStationRoundedIcon from '@mui/icons-material/EvStationRounded';
+import LocalShippingRoundedIcon from '@mui/icons-material/LocalShippingRounded';
 import RecentActorsIcon from "@mui/icons-material/RecentActors"
+import AirportShuttleRoundedIcon from '@mui/icons-material/AirportShuttleRounded';
 import GroupIcon from "@mui/icons-material/Group"
 import TheatersIcon from "@mui/icons-material/Theaters"
 import { createTheme, ThemeProvider } from "@mui/material"
@@ -21,12 +23,12 @@ import { Link } from "react-router-dom"
 import LoginIcon from "@mui/icons-material/Login"
 import GroupAddIcon from "@mui/icons-material/GroupAdd"
 import { useContext } from "react"
-import FilmsContext from "../utils/FilmsContext"
+import CarsContext from "../utils/CarsContext"
 
 const drawerWidth = 240
 
 export default function PermanentDrawerLeft() {
-  const { logout } = useContext(FilmsContext)
+  const { logout } = useContext(CarsContext)
   return (
     <ThemeProvider
       theme={createTheme({
@@ -59,48 +61,39 @@ export default function PermanentDrawerLeft() {
         <List>
           <ListItem>
             <ListItemIcon>
-              <TheatersIcon />
+              <DirectionsCarFilledRoundedIcon />
             </ListItemIcon>
-            <ListItemText primary="My films dashboard" />
+            <ListItemText primary="CARLA dashboard" />
           </ListItem>
         </List>
+  
         <List>
-          <Link to="/films">
+          <Link to="/cars">
             <ListItem button>
               <ListItemIcon>
-                <MovieCreationIcon />
+              <EvStationRoundedIcon />
               </ListItemIcon>
-              <ListItemText primary="films" sx={{ color: "white", textDecoration: "none" }} />
+              <ListItemText primary="cars" sx={{ color: "white", textDecoration: "none" }} />
             </ListItem>
           </Link>
-          <Link to="/genres">
+          <Link to="/makes">
             <ListItem button>
               <ListItemIcon>
-                <AddReactionIcon />
+              <LocalShippingRoundedIcon />
               </ListItemIcon>
-              <ListItemText primary="genres" sx={{ color: "white", textDecoration: "none" }} />
+              <ListItemText primary="makes" sx={{ color: "white", textDecoration: "none" }} />
             </ListItem>
           </Link>
-          <Link to="/casts">
+          <Link to="/types">
             <ListItem button>
               <ListItemIcon>
-                <RecentActorsIcon />
+                <AirportShuttleRoundedIcon  />
               </ListItemIcon>
-              <ListItemText primary="casts" sx={{ color: "white", textDecoration: "none" }} />
+              <ListItemText primary="types" sx={{ color: "white", textDecoration: "none" }} />
             </ListItem>
           </Link>
         </List>
         <Divider />
-        <List>
-          <Link to="/users">
-            <ListItem button>
-              <ListItemIcon>
-                <GroupIcon />
-              </ListItemIcon>
-              <ListItemText primary="users" sx={{ color: "white", textDecoration: "none" }} />
-            </ListItem>
-          </Link>
-        </List>
         <List style={{ marginTop: "auto" }}>
           {localStorage.tokenDashboardFilms ? (
             <Link to="/login">

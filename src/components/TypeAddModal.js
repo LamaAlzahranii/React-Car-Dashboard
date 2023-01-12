@@ -2,46 +2,31 @@ import { useContext } from "react"
 import { Button, Col, Form, Modal, Row } from "react-bootstrap"
 import CarsContext from "../utils/CarsContext"
 
-function AdminAddModal(props) {
+function TypeAddModal(props) {
+  
   const { show, setShow } = props
-  const { addAdmin } = useContext(CarsContext)
+  const { addType } = useContext(CarsContext)
   return (
     <Modal show={show} onHide={() => setShow(false)}>
-      <Form onSubmit={addAdmin}>
+      <Form onSubmit={addType}>
         <Modal.Header closeButton>
-          <Modal.Title>Add Admin</Modal.Title>
+          <Modal.Title>Add type</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group as={Row} className="mb-3">
             <Form.Label column md="3">
-              First Name
+              Name
             </Form.Label>
             <Col md="8">
-              <Form.Control name="firstName" type="text" required />
+              <Form.Control type="text" name="name" required />
             </Col>
           </Form.Group>
           <Form.Group as={Row} className="mb-3">
             <Form.Label column md="3">
-              Last Name
+              image
             </Form.Label>
             <Col md="8">
-              <Form.Control type="text" name="lastName" required />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="mb-3">
-            <Form.Label column md="3">
-              Email
-            </Form.Label>
-            <Col md="8">
-              <Form.Control type="email" name="email" required />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="mb-3">
-            <Form.Label column md="3">
-              Password
-            </Form.Label>
-            <Col md="8">
-              <Form.Control type="password" name="password" required />
+              <Form.Control type="url" name="image" required />
             </Col>
           </Form.Group>
         </Modal.Body>
@@ -50,7 +35,7 @@ function AdminAddModal(props) {
             Close
           </Button>
           <Button variant="primary" type="submit" onClick={() => setShow(false)}>
-            Add Admin
+            Add type
           </Button>
         </Modal.Footer>
       </Form>
@@ -58,4 +43,4 @@ function AdminAddModal(props) {
   )
 }
 
-export default AdminAddModal
+export default TypeAddModal

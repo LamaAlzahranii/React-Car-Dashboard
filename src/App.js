@@ -1,3 +1,4 @@
+import { AirplaneTicket } from "@mui/icons-material"
 import { CssBaseline } from "@mui/material"
 import { Box } from "@mui/system"
 import axios from "axios"
@@ -5,69 +6,54 @@ import { useEffect, useState } from "react"
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom"
 import { toast, ToastContainer } from "react-toastify"
 import Sidebar from "./components/Sidebar"
-import Films from "./pages/Films"
-import FilmsContext from "./utils/FilmsContext"
+import CarsContext from "./utils/CarsContext"
+import Cars from "./pages/Cars"
 import Login from "./pages/Login"
-import Users from "./pages/Users"
-import Genres from "./pages/Genres"
-import Casts from "./pages/Casts"
+import Type from "./pages/Type"
+import Make from "./pages/Make"
 
 function App() {
-  const [films, setFilms] = useState([])
-  const [genres, setGenres] = useState([])
-  const [casts, setCasts] = useState([])
-  const [actors, setActors] = useState([])
-  const [directors, setDirectors] = useState([])
-  const [users, setUsers] = useState([])
+  const [cars, setCars] = useState([])
+  const [makes, setMakes] = useState([])
+  const [types, setTypes] = useState([])
   const navigate = useNavigate()
-
-  const getFilms = async () => {
-    const response = await axios.get("http://localhost:5000/api/films")
-    setFilms(response.data)
+  //------------------------------get cars-------------------------------//
+  const getCars = async () => {
+    const response = await axios.get("http://localhost:3020/api/cars")
+    setCars(response.data)
   }
-
-  const getCasts = async () => {
-    const response = await axios.get("http://localhost:5000/api/casts")
-    setCasts(response.data)
-    setActors(response.data.filter(cast => cast.type === "Actor"))
-    setDirectors(response.data.filter(cast => cast.type === "Director"))
+  //--------------------------------get makes-----------------------------//
+  const getMakes = async () => {
+    const response = await axios.get("http://localhost:3020/api/makes")
+    setMakes(response.data)
   }
+  //--------------------------------get types-----------------------------//
 
-  const getGenres = async () => {
-    const response = await axios.get("http://localhost:5000/api/genres")
-    setGenres(response.data)
+  const getTypes = async () => {
+    const response = await axios.get("http://localhost:3020/api/types")
+    setTypes(response.data)
   }
-
-  const getUsers = async () => {
-    const response = await axios.get("http://localhost:5000/api/auth/users", {
-      headers: {
-        Authorization: localStorage.tokenDashboardFilms,
-      },
-    })
-    setUsers(response.data)
-  }
-
   useEffect(() => {
-    getFilms()
-    getGenres()
-    getCasts()
-    getUsers()
+    getCars()
+    getMakes()
+    getTypes()
   }, [])
-
-  const deleteFilm = async filmId => {
+  //--------------------------------delete cars-----------------------------//
+  const deleteCras = async carId => {
     try {
-      await axios.delete(`http://localhost:5000/api/films/${filmId}`, {
+      await axios.delete(`http://localhost:3020/api/cars/${carId}`, {
         headers: {
-          Authorization: localStorage.tokenDashboardFilms,
+          Authorization: localStorage.tokenDashboardCars,
         },
       })
-      toast.success("film deleted")
-      getFilms()
+      toast.success("car deleted")
+      getCars()
     } catch (error) {
       if (error.response) toast.error(error.response.data)
       else console.log(error)
     }
   }
+  //--------------------------------login-----------------------------//
 
   const login = async e => {
     e.preventDefault()
@@ -77,123 +63,108 @@ function App() {
         email: form.elements.email.value,
         password: form.elements.password.value,
       }
-      const response = await axios.post("http://localhost:5000/api/auth/login/admin", adminBody)
-      localStorage.tokenDashboardFilms = response.data
+      const response = await axios.post("http://localhost:3020/api/auth/login/admin", adminBody)
+      localStorage.tokenDashboardCars = response.data
       toast.success("login success")
-      navigate("/films")
+      navigate("/cars")
     } catch (error) {
       if (error.response) toast.error(error.response.data)
       else console.log(error)
     }
   }
+  //------------------------------edit cars-------------------------------//
 
-  const editFilm = async (e, filmId) => {
+  const editCars = async (e, carId) => {
     e.preventDefault()
     try {
       const form = e.target
 
-      const genres = []
-      if (form.elements.genres.forEach) {
-        form.elements.genres.forEach(genre => {
-          if (genre.checked) {
-            genres.push(genre.value)
-          }
-        })
-      } else {
-        if (form.elements.genres.checked) {
-          genres.push(form.elements.genres.value)
-        }
+      const carBody = {
+        model: form.elements.model.value,
+        price: form.elements.price.value,
+        make: form.elements.make.value,
+        type: form.elements.type.value,
+        miles: form.elements.miles.value,
+        year: form.elements.year.value,
+        photo360: form.elements.photo360.value.split(","),
+        body: form.elements.body.value,
+        cylinders: form.elements.cylinders.value,
+        engine: form.elements.engine.value,
+        horsePower: form.elements.horsePower.value,
+        passengerCapacity: form.elements.passengerCapacity.value,
+        driveType: form.elements.driveType.value,
+        size: form.elements.size.value,
+        torque: form.elements.torque.value,
+        transmission: form.elements.transmission.value,
+        remoteStart: form.elements.remoteStart.checked,
+        powerWindows: form.elements.powerWindows.checked,
+        powerLocks: form.elements.powerLocks.checked,
+        powerSeats: form.elements.powerSeats.checked,
+        powerMirrors: form.elements.powerMirrors.checked,
+        cruiseControl: form.elements.cruiseControl.checked,
       }
-
-      const actors = []
-      if (form.elements.genres.forEach) {
-        form.elements.actors.forEach(actor => {
-          if (actor.checked) {
-            actors.push(actor.value)
-          }
-        })
-      } else {
-        if (form.elements.actors.checked) {
-          actors.push(form.elements.actors.value)
-        }
-      }
-
-      const filmBody = {
-        title: form.elements.title.value,
-        description: form.elements.description.value,
-        poster: form.elements.poster.value,
-        genres: genres,
-        actors: actors,
-        director: form.elements.director.value,
-      }
-      await axios.put(`http://localhost:5000/api/films/${filmId}`, filmBody, {
+      await axios.put(`http://localhost:3020/api/cars/${carId}`, carBody, {
         headers: {
-          Authorization: localStorage.tokenDashboardFilms,
+          Authorization: localStorage.tokenDashboardCars,
         },
       })
-      getFilms()
+      getCars()
       toast.success("edit success")
     } catch (error) {
       if (error.response) toast.error(error.response.data)
       else console.log(error)
     }
   }
+  //------------------------------add cars-------------------------------//
 
-  const addFilm = async e => {
+  const addCar = async e => {
+    console.log("kkkk")
     e.preventDefault()
     try {
       const form = e.target
 
-      const genres = []
-      if (form.elements.genres.forEach) {
-        form.elements.genres.forEach(genre => {
-          if (genre.checked) {
-            genres.push(genre.value)
-          }
-        })
-      } else {
-        if (form.elements.genres.checked) {
-          genres.push(form.elements.genres.value)
-        }
+      const carBody = {
+        model: form.elements.model.value,
+        price: form.elements.price.value,
+        make: form.elements.make.value,
+        type: form.elements.type.value,
+        miles: form.elements.miles.value,
+        year: form.elements.year.value,
+        photo360: form.elements.photo360.value.split(","),
+        body: form.elements.body.value,
+        cylinders: form.elements.cylinders.value,
+        engine: form.elements.engine.value,
+        horsePower: form.elements.horsePower.value,
+        passengerCapacity: form.elements.passengerCapacity.value,
+        driveType: form.elements.driveType.value,
+        size: form.elements.size.value,
+        torque: form.elements.torque.value,
+        transmission: form.elements.transmission.value,
+        remoteStart: form.elements.remoteStart.checked,
+        powerWindows: form.elements.powerWindows.checked,
+        powerLocks: form.elements.powerLocks.checked,
+        powerSeats: form.elements.powerSeats.checked,
+        powerMirrors: form.elements.powerMirrors.checked,
+        cruiseControl: form.elements.cruiseControl.checked,
       }
-
-      const actors = []
-      if (form.elements.genres.forEach) {
-        form.elements.actors.forEach(actor => {
-          if (actor.checked) {
-            actors.push(actor.value)
-          }
-        })
-      } else {
-        if (form.elements.actors.checked) {
-          actors.push(form.elements.actors.value)
-        }
-      }
-
-      const filmBody = {
-        title: form.elements.title.value,
-        description: form.elements.description.value,
-        poster: form.elements.poster.value,
-        genres: genres,
-        actors: actors,
-        director: form.elements.director.value,
-      }
-      await axios.post(`http://localhost:5000/api/films`, filmBody, {
+      await axios.post(`http://localhost:3020/api/cars`, carBody, {
         headers: {
-          Authorization: localStorage.tokenDashboardFilms,
+          Authorization: localStorage.tokenDashboardCars,
         },
       })
-      getFilms()
-      toast.success("add film success")
+      getCars()
+      toast.success("add car success")
     } catch (error) {
       if (error.response) toast.error(error.response.data)
       else console.log(error)
     }
   }
+  //------------------------------logout-------------------------------//
 
   const logout = () => {
-    localStorage.removeItem("tokenDashboardFilms")
+    localStorage.removeItem("tokenDashboardCars")
   }
+  //------------------------------add Admin-------------------------------//
 
   const addAdmin = async e => {
     e.preventDefault()
@@ -205,150 +176,137 @@ function App() {
         lastName: form.elements.lastName.value,
         email: form.elements.email.value,
         password: form.elements.password.value,
-        avatar: form.elements.avatar.value,
       }
-      await axios.post(`http://localhost:5000/api/auth/add-admin`, adminBody, {
+      await axios.post(`http://localhost:3020/api/auth/add-admin`, adminBody, {
         headers: {
-          Authorization: localStorage.tokenDashboardFilms,
+          Authorization: localStorage.tokenDashboardCars,
         },
       })
-      getUsers()
       toast.success("add admin success")
     } catch (error) {
       if (error.response) toast.error(error.response.data)
       else console.log(error)
     }
   }
+  //------------------------------add make-------------------------------//
 
-  const deleteUser = async userId => {
-    try {
-      await axios.delete(`http://localhost:5000/api/auth/users/${userId}`, {
-        headers: {
-          Authorization: localStorage.tokenDashboardFilms,
-        },
-      })
-      toast.success("user deleted")
-      getUsers()
-    } catch (error) {
-      if (error.response) toast.error(error.response.data)
-      else console.log(error)
-    }
-  }
-
-  const addGenre = async e => {
+  const addMake = async e => {
     e.preventDefault()
     try {
       const form = e.target
 
-      const genreBody = {
+      const makeBody = {
         name: form.elements.name.value,
+        image: form.elements.image.value,
       }
-      await axios.post(`http://localhost:5000/api/genres`, genreBody, {
+      await axios.post(`http://localhost:3020/api/makes`, makeBody, {
         headers: {
-          Authorization: localStorage.tokenDashboardFilms,
+          Authorization: localStorage.tokenDashboardCars,
         },
       })
-      getGenres()
-      toast.success("add genre success")
+      getMakes()
+      toast.success("add make success")
     } catch (error) {
       if (error.response) toast.error(error.response.data)
       else console.log(error)
     }
   }
+  //------------------------------edit make-------------------------------//
 
-  const editGenre = async (e, genreId) => {
+  const editMake = async (e, carId) => {
     e.preventDefault()
     try {
       const form = e.target
 
-      const genreBody = {
+      const makeBody = {
         name: form.elements.name.value,
+        image: form.elements.image.value,
       }
-      await axios.put(`http://localhost:5000/api/genres/${genreId}`, genreBody, {
+      await axios.put(`http://localhost:3020/api/makes/${carId}`, makeBody, {
         headers: {
-          Authorization: localStorage.tokenDashboardFilms,
+          Authorization: localStorage.tokenDashboardCars,
         },
       })
-      getGenres()
-      toast.success("edit genre success")
+      getMakes()
+      toast.success("edit make success")
     } catch (error) {
       if (error.response) toast.error(error.response.data)
       else console.log(error)
     }
   }
+  //------------------------------delete make-------------------------------//
 
-  const deleteGenre = async genreId => {
+  const deleteMake = async makeId => {
     try {
-      await axios.delete(`http://localhost:5000/api/genres/${genreId}`, {
+      await axios.delete(`http://localhost:3020/api/makes/${makeId}`, {
         headers: {
-          Authorization: localStorage.tokenDashboardFilms,
+          Authorization: localStorage.tokenDashboardCars,
         },
       })
-      toast.success("genre deleted")
-      getGenres()
+      toast.success("make deleted")
+      getMakes()
     } catch (error) {
       if (error.response) toast.error(error.response.data)
       else console.log(error)
     }
   }
+  //------------------------------add type-------------------------------//
 
-  const addCast = async e => {
+  const addType = async e => {
     e.preventDefault()
     try {
       const form = e.target
 
-      const castBody = {
-        firstName: form.elements.firstName.value,
-        lastName: form.elements.lastName.value,
-        photo: form.elements.photo.value,
-        type: form.elements.type.value,
+      const typeBody = {
+        name: form.elements.name.value,
+        image: form.elements.image.value,
       }
-      await axios.post(`http://localhost:5000/api/casts`, castBody, {
+      await axios.post(`http://localhost:3020/api/types`, typeBody, {
         headers: {
-          Authorization: localStorage.tokenDashboardFilms,
+          Authorization: localStorage.tokenDashboardCars,
         },
       })
-      getCasts()
-      toast.success("add cast success")
+      getTypes()
+      toast.success("add type success")
     } catch (error) {
       if (error.response) toast.error(error.response.data)
       else console.log(error)
     }
   }
+  //------------------------------edit type-------------------------------//
 
-  const editCast = async (e, castId) => {
+  const editType = async (e, typeId) => {
     e.preventDefault()
     try {
       const form = e.target
 
-      const castBody = {
-        firstName: form.elements.firstName.value,
-        lastName: form.elements.lastName.value,
-        photo: form.elements.photo.value,
-        type: form.elements.type.value,
+      const typeBody = {
+        name: form.elements.name.value,
+        image: form.elements.image.value,
       }
-      await axios.put(`http://localhost:5000/api/casts/${castId}`, castBody, {
+      await axios.put(`http://localhost:3020/api/types/${typeId}`, typeBody, {
         headers: {
-          Authorization: localStorage.tokenDashboardFilms,
+          Authorization: localStorage.tokenDashboardCars,
         },
       })
-      getCasts()
-      toast.success("edit cast success")
+      getTypes()
+      toast.success("edit type success")
     } catch (error) {
       if (error.response) toast.error(error.response.data)
       else console.log(error)
     }
   }
+  //------------------------------delete type-------------------------------//
 
-  const deleteCast = async castId => {
+  const deleteType = async typeId => {
     try {
-      await axios.delete(`http://localhost:5000/api/casts/${castId}`, {
+      await axios.delete(`http://localhost:3020/api/types/${typeId}`, {
         headers: {
-          Authorization: localStorage.tokenDashboardFilms,
+          Authorization: localStorage.tokenDashboardCars,
         },
       })
-      toast.success("cast deleted")
-      getCasts()
+      toast.success("type deleted")
+      getTypes()
     } catch (error) {
       if (error.response) toast.error(error.response.data)
       else console.log(error)
@@ -356,29 +314,25 @@ function App() {
   }
 
   const store = {
-    films,
-    genres,
-    actors,
-    directors,
-    users,
-    casts,
-    deleteFilm,
+    cars,
+    makes,
+    types,
+    deleteCras,
     login,
-    editFilm,
-    addFilm,
+    editCars,
+    addCar,
     logout,
     addAdmin,
-    deleteUser,
-    addGenre,
-    editGenre,
-    deleteGenre,
-    addCast,
-    editCast,
-    deleteCast,
+    addMake,
+    editMake,
+    deleteMake,
+    addType,
+    editType,
+    deleteType,
   }
 
   return (
-    <FilmsContext.Provider value={store}>
+    <CarsContext.Provider value={store}>
       <ToastContainer />
       <CssBaseline />
       <Box sx={{ display: "flex" }}>
@@ -386,15 +340,14 @@ function App() {
 
         <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
           <Routes>
-            <Route path="/films" element={localStorage.tokenDashboardFilms ? <Films /> : <Navigate to="/login" />} />
-            <Route path="/users" element={localStorage.tokenDashboardFilms ? <Users /> : <Navigate to="/login" />} />
-            <Route path="/genres" element={localStorage.tokenDashboardFilms ? <Genres /> : <Navigate to="/login" />} />
-            <Route path="/casts" element={localStorage.tokenDashboardFilms ? <Casts /> : <Navigate to="/login" />} />
+            <Route path="/cars" element={localStorage.tokenDashboardCars ? <Cars /> : <Navigate to="/login" />} />
+            <Route path="/types" element={localStorage.tokenDashboardCars ? <Type /> : <Navigate to="/login" />} />
+            <Route path="/makes" element={localStorage.tokenDashboardCars ? <Make /> : <Navigate to="/login" />} />
             <Route path="/login" element={<Login />} />
           </Routes>
         </Box>
       </Box>
-    </FilmsContext.Provider>
+    </CarsContext.Provider>
   )
 }
 
